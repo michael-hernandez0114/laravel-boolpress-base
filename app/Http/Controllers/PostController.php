@@ -21,6 +21,18 @@ class PostController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function published()
+    {
+        $posts = Post::where('published', '1')->get();
+
+        return view('posts.published', compact('posts'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -49,7 +61,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+
     }
 
     /**
