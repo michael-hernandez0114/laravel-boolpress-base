@@ -53,12 +53,13 @@ class PostController extends Controller
 
         $validator = Validator::make($data, [
             'title' => 'required|string|max:150',
-            'body' => 'required',
-            'author' => 'required'
+            'message' => 'required',
+            'author' => 'required',
+            'category' => 'required'
         ]);
 
         if ($validator->fails()) {
-            return redirect('articles/create')
+            return redirect('posts/create')
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -70,15 +71,15 @@ class PostController extends Controller
         // ]);
         
         // dd($request->all(););
-        $article = new Article;
+        $post = new Post;
         // $article->title = $data['title'];
-        $article->fill($data);
-        $saved = $article->save();
+        $post->fill($data);
+        $saved = $post->save();
         if(!$saved) {
             dd('errore di salvataggio');
         }
         
-        return redirect()->route('articles.show', $article->id);
+        return redirect()->route('posts.show', $post->id);
     }
 
     /**
@@ -89,7 +90,19 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        //se uso $id
+        //$article = Article::find($id);
+
+        // se uso slug 
+        $post = Post::where('slug', $slug)->first();
+        // dd($article);
+
+        //se non trovo articolo mando pagina 404
+        if(empty($post)){
+            abort('404');
+        }
+        
+        return view('posts.show', compact('post'));
     }
 
     /**

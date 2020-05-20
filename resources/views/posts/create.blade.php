@@ -27,7 +27,7 @@
     </div>
     <div>
       <label for="title">Message</label>
-      <textarea name="body" cols="30" rows="10">Enter your Post</textarea>
+      <textarea name="message" cols="30" rows="10" placeholder="Enter your post"></textarea>
     </div>
     <div>
       <label for="title">Author</label>
