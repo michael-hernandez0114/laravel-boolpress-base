@@ -79,7 +79,7 @@ class PostController extends Controller
             dd('errore di salvataggio');
         }
         
-        return redirect()->route('posts.show', $post->id);
+        return redirect()->route('posts.show', $post->slug);
     }
 
     /**
@@ -88,7 +88,7 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
         //se uso $id
         //$article = Article::find($id);

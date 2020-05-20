@@ -21,7 +21,7 @@ class CreatePostsTable extends Migration
             $table->text('message');
             $table->text('profile_icon');
             $table->string('category', 20);
-            $table->integer('post_position');
+            $table->integer('post_position') -> default('0');
             $table->boolean('published');
             $table->timestamps();
         });
