@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -20,6 +22,13 @@ class PostController extends Controller
         return view('posts.index', compact('posts'));
     }
 
+    public function indexPublished()
+    {
+        $posts = Post::where('published', true)->get();
+        //  dd($posts);
+        return view('posts.index', compact('posts'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -27,7 +36,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -38,7 +47,38 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $data['slug'] = Str::slug($data['title'] , '-') . rand(1,100);
+
+
+        $validator = Validator::make($data, [
+            'title' => 'required|string|max:150',
+            'body' => 'required',
+            'author' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('articles/create')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // $request->validate([
+        //     'title' => 'required|string|max:150',
+        //     'body' => 'required',
+        //     'author' => 'required'
+        // ]);
+        
+        // dd($request->all(););
+        $article = new Article;
+        // $article->title = $data['title'];
+        $article->fill($data);
+        $saved = $article->save();
+        if(!$saved) {
+            dd('errore di salvataggio');
+        }
+        
+        return redirect()->route('articles.show', $article->id);
     }
 
     /**
