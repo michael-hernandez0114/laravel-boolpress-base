@@ -115,7 +115,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        if(empty($article)) {
+        if(empty($post)) {
             abort('404');
         }
 
@@ -155,15 +155,7 @@ class PostController extends Controller
                 ->withInput();
         }
 
-        // $request->validate([
-        //     'title' => 'required|string|max:150',
-        //     'body' => 'required',
-        //     'author' => 'required'
-        // ]);
-        
-        // dd($request->all(););
-        $post = new Post;
-        // $article->title = $data['title'];
+      
         $post->fill($data);
         $updated = $post->update();
         if(!$updated) {
