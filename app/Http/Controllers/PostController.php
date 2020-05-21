@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Post;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class PostController extends Controller
 {
@@ -48,7 +49,8 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $data['slug'] = Str::slug($data['title'] , '-') . rand(1,100);
+        $now = Carbon::now()->format('Y-m-d-H-i-s');
+        $data['slug'] = Str::slug($data['title'] , '-') . $now;
 
 
         $validator = Validator::make($data, [
@@ -59,7 +61,7 @@ class PostController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect('posts/create')
+            return redirect('posts.create')
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -111,9 +113,13 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        if(empty($article)) {
+            abort('404');
+        }
+
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -125,7 +131,47 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $post = Post::find($id);
+
+        if(empty($post)) {
+            abort('404');
+        }
+
+        $data = $request->all();
+        $now = Carbon::now()->format('Y-m-d-H-i-s');
+        $data['slug'] = Str::slug($data['title'] , '-') . $now;
+
+
+        $validator = Validator::make($data, [
+            'title' => 'required|string|max:150',
+            'message' => 'required',
+            'author' => 'required',
+            'category' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('posts.edit')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // $request->validate([
+        //     'title' => 'required|string|max:150',
+        //     'body' => 'required',
+        //     'author' => 'required'
+        // ]);
+        
+        // dd($request->all(););
+        $post = new Post;
+        // $article->title = $data['title'];
+        $post->fill($data);
+        $updated = $post->update();
+        if(!$updated) {
+            dd('Update Error');
+        }
+        
+        return redirect()->route('posts.show', $post->slug);
+
     }
 
     /**
